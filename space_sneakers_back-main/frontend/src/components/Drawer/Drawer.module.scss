@@ -1,0 +1,100 @@
+.drawer {
+  position: fixed;
+  right: 0; /* Изменено с left на right */
+  top: 0;
+  width: 420px;
+  height: 100%;
+  background: var(--neon-surface);
+  box-shadow: var(--neon-glow-strong);
+  padding: 30px;
+  transform: translateX(100%); /* Сдвигаем вправо за пределы экрана */
+  transition: transform 0.3s ease-in-out;
+  z-index: 1000;
+  color: var(--neon-text);
+
+  &.visible {
+    transform: translateX(0); /* При открытии сдвигаем обратно */
+  }
+
+  .items {
+    flex: 1;
+    overflow: auto;
+    margin-bottom: 40px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--neon-primary) var(--neon-border);
+
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: var(--neon-border);
+      border-radius: 3px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: var(--neon-primary);
+      border-radius: 3px;
+    }
+  }
+
+  h2 {
+    margin: 0;
+    font-size: 24px;
+    transition: transform 0.2s ease;
+    color: var(--neon-text);
+
+    &:hover {
+      transform: scale(1.02);
+    }
+
+    img {
+      filter: invert(var(--icon-invert));
+    }
+  }
+}
+
+.overlay {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.3s ease-out, visibility 0.3s ease-out;
+  backdrop-filter: blur(5px);
+}
+
+.overlayVisible {
+  visibility: visible;
+  opacity: 1;
+
+  .drawer {
+    transform: translateX(0);
+  }
+}
+
+:root {
+  --icon-invert: 0;
+}
+
+@media (max-width: 768px) {
+  .drawer {
+    width: 100%;
+    max-width: 420px;
+    padding: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .drawer {
+    padding: 15px;
+
+    h2 {
+      font-size: 20px;
+    }
+  }
+}

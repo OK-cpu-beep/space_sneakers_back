@@ -7,7 +7,6 @@ class Client(models.Model):
 
     class Meta:
         db_table = 'clients'
-        managed = False
 
 class Product(models.Model):
     name = models.CharField(max_length=100)
@@ -16,7 +15,6 @@ class Product(models.Model):
 
     class Meta:
         db_table = 'products'
-        managed = False
 
 class ClientOrder(models.Model):
     client = models.ForeignKey(Client, on_delete=models.CASCADE, db_column='client_id')
@@ -25,7 +23,6 @@ class ClientOrder(models.Model):
 
     class Meta:
         db_table = 'clientorders'
-        managed = False
 
 class Discount(models.Model):
     discount_name = models.CharField(max_length=100)
@@ -35,7 +32,6 @@ class Discount(models.Model):
 
     class Meta:
         db_table = 'discount'
-        managed = False
 
 class Recommendation(models.Model):
     source_product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='source_recommendations', db_column='source_product_id')
@@ -44,4 +40,3 @@ class Recommendation(models.Model):
 
     class Meta:
         db_table = 'recommendations'
-        managed = False

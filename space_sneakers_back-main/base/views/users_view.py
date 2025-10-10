@@ -19,6 +19,10 @@ def generate_jwt(client):
 class RegisterView(APIView):
     def post(self, request):
         serializer = ClientSerializer(data=request.data)
+        if not serializer.is_valid():
+            print("Ошибки валидации:", serializer.errors)  # ← Вот так!
+            print(serializer)
+            return Response(serializer.errors, status=400)
         if serializer.is_valid():
             # Проверка уникальности имени
             name = serializer.validated_data['name']
