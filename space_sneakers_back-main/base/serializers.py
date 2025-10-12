@@ -1,82 +1,53 @@
 from rest_framework import serializers
-from .models import Client, Product, ClientOrder, Discount, Recommendation
+from .models import Sneaker, Cart, CartItem, User, Feedback
+from django.contrib.auth.hashers import make_password
+from django.contrib.auth import authenticate
 
-class ClientSerializer(serializers.ModelSerializer):
+class SneakerSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Client
+        model = Sneaker
         fields = '__all__'
 
-    def validate_default_discount_percent(self, value):
-        try:
-            return Decimal(value)
-        except Exception:
-            raise serializers.ValidationError("Некорректное значение для поля 'default_discount_percent'")
-
-
-class ProductSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Product
-        fields = '__all__'
-
-class ClientOrderSerializer(serializers.ModelSerializer):
-    client = ClientSerializer(read_only=True)
-    product = ProductSerializer(read_only=True)
-    client_id = serializers.IntegerField()
-    product_id = serializers.IntegerField(write_only=True, allow_null=True, required=False, source='product_id')
+class CartItemSerializer(serializers.ModelSerializer):
+    sneaker = SneakerSerializer(read_only=True)  # Включаем информацию о кроссовке
+    sneaker_id = serializers.PrimaryKeyRelatedField(queryset=Sneaker.objects.all(), source='sneaker', write_only=True)
 
     class Meta:
-        model = ClientOrder
-        fields = '__all__'
+        model = CartItem
+        fields = ['id', 'sneaker', 'sneaker_id', 'size', 'quantity']
+
+class CartSerializer(serializers.ModelSerializer):
+    items = CartItemSerializer(
+        source='cartitem_set',      # <-- вот отсюда
+        many=True,
+        read_only=True
+    )
+    user_id = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), source='user')
+
+    class Meta:
+        model = Cart
+        fields = ['id', 'user_id', 'total_amount', 'is_paid', 'items']
+        depth = 1
+
+
+class UserRegisterSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['email', 'password', 'phone', 'gender', 
+                'birth_date', 'passport_series', 'passport_number']
+        extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):
-        client_id = validated_data.pop('client_id')
-        product_id = validated_data.pop('product_id', None)
-        client = Client.objects.get(id=client_id)
-        product = Product.objects.get(id=product_id) if product_id else None
-        client_order = ClientOrder.objects.create(client=client, product=product, **validated_data)
-        return client_order
+        validated_data['password'] = make_password(validated_data['password'])
+        return super().create(validated_data)
 
-    def update(self, instance, validated_data):
-        client_id = validated_data.pop('client_id', None)
-        product_id = validated_data.pop('product_id', None)
-        if client_id:
-            instance.client = Client.objects.get(id=client_id)
-        if product_id is not None:
-            instance.product = Product.objects.get(id=product_id) if product_id else None
-        return super().update(instance, validated_data)
-
-class DiscountSerializer(serializers.ModelSerializer):
+class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Discount
-        fields = '__all__'
+        model = User
+        fields = ['id', 'email', 'phone', 'gender', 
+                'birth_date', 'passport_series', 'passport_number']
+        read_only_fields = ['email']
 
-class RecommendationSerializer(serializers.ModelSerializer):
-    source_product = ProductSerializer(read_only=True)
-    recommended_product = ProductSerializer(read_only=True)
-    source_product_id = serializers.IntegerField(write_only=True, source='source_product_id')
-    recommended_product_id = serializers.IntegerField(write_only=True, source='recommended_product_id')
-
-    class Meta:
-        model = Recommendation
-        fields = '__all__'
-
-    def create(self, validated_data):
-        source_product_id = validated_data.pop('source_product_id')
-        recommended_product_id = validated_data.pop('recommended_product_id')
-        source_product = Product.objects.get(id=source_product_id)
-        recommended_product = Product.objects.get(id=recommended_product_id)
-        recommendation = Recommendation.objects.create(
-            source_product=source_product,
-            recommended_product=recommended_product,
-            **validated_data
-        )
-        return recommendation
-
-    def update(self, instance, validated_data):
-        source_product_id = validated_data.pop('source_product_id', None)
-        recommended_product_id = validated_data.pop('recommended_product_id', None)
-        if source_product_id:
-            instance.source_product = Product.objects.get(id=source_product_id)
-        if recommended_product_id:
-            instance.recommended_product = Product.objects.get(id=recommended_product_id)
-        return super().update(instance, validated_data)
+class UserLoginSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    password = serializers.CharField()
