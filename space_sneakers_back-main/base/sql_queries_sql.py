@@ -100,3 +100,39 @@ def get_products(user_id):
 
     connection.close()
     return json.dumps([{"sneaker_id": prod['id'], "name": prod['name'], "quantity": prod['quantity']} for prod in products])
+
+def fetch_consumables():
+    conn = None
+    try:
+        # Подключение к базе данных
+        conn = psycopg2.connect(**DB_PARAMS)
+        cur = conn.cursor()
+
+        # Выполнение SQL-запроса
+        cur.execute("SELECT con_id, name, price, category, imageurl FROM public.consumables;")
+
+        # Получение всех строк
+        rows = cur.fetchall()
+
+        # Преобразование в список словарей (как JSON)
+        consumables = []
+        for row in rows:
+            consumables.append({
+                'id': row[0],
+                'title': row[1],
+                'price': float(row[2]),  # NUMERIC → float
+                'category': row[3],
+                'imageUrl': row[4]
+            })
+
+        # Вывод в формате JSON
+        print(json.dumps(consumables, ensure_ascii=False, indent=2))
+        return consumables
+
+    except (Exception, psycopg2.DatabaseError) as error:
+        print("Ошибка при работе с PostgreSQL:", error)
+        return []
+
+    finally:
+        if conn is not None:
+            conn.close()

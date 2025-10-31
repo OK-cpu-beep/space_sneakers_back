@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Sneaker, Cart, CartItem, User, Feedback
+from .models import Sneaker, Cart, CartItem, User
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth import authenticate
 

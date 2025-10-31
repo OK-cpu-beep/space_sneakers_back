@@ -113,8 +113,8 @@ DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
         "NAME": "test",
-        "USER": "test_user", # "USER": "postgres"
-        "PASSWORD": "test_password", # "PASSWORD": "postgres"
+        "USER": "postgres", # "USER": "postgres"
+        "PASSWORD": "1234", # "PASSWORD": "postgres"
         "HOST": "localhost", # "HOST": "db" но я на local проверю
         "PORT": "5432",
     }

@@ -42,9 +42,9 @@ def delete_order_item(request, cart_id, item_id):
 
 
 @api_view(['PUT'])
-def update_order(request, cart_id):
+def update_order(request, order_id):
     try:
-        cart = Cart.objects.get(id=cart_id)
+        cart = Cart.objects.get(id=order_id)
         # Удаляем все старые позиции
         cart.cartitem_set.all().delete()
 

@@ -4,45 +4,30 @@ import { useCart } from "../hooks/useCart"
 import { api } from "../api"
 
 // Дополнительные товары (стельки и шнурки)
-const ADDITIONAL_PRODUCTS = [
-  {
-    id: 1001,
-    title: "Гелевые стельки Nike",
-    price: 1990,
-    imageUrl: "/img/accessories/insoles-1.png",
-    category: "insoles",
-  },
-  {
-    id: 1002,
-    title: "Ортопедические стельки Adidas",
-    price: 2490,
-    imageUrl: "/img/accessories/insoles-2.png",
-    category: "insoles",
-  },
-  {
-    id: 1003,
-    title: "Шнурки Nike (белые)",
-    price: 490,
-    imageUrl: "/img/accessories/laces-1.png",
-    category: "laces",
-  },
-  {
-    id: 1004,
-    title: "Шнурки Adidas (черные)",
-    price: 590,
-    imageUrl: "/img/accessories/laces-2.png",
-    category: "laces",
-  },
-  {
-    id: 1005,
-    title: "Шнурки Jordan (красные)",
-    price: 690,
-    imageUrl: "/img/accessories/laces-3.png",
-    category: "laces",
-  },
-]
+function useAdditionalProducts() {
+  const [additionalProducts, setAdditionalProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const res = await fetch('/api/consumables/');
+        const data = await res.json();
+        setAdditionalProducts(data);
+      } catch (err) {
+        console.error('Ошибка загрузки расходников:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProducts();
+  }, []);
+
+  return { additionalProducts, loading };
+}
 
 function Orders() {
+  const { additionalProducts, loading } = useAdditionalProducts();
   const { cartItems, setCartItems, onRemoveItem, currentUser, onAddToCart } =
     useContext(AppContext)
   const { totalPrice } = useCart()

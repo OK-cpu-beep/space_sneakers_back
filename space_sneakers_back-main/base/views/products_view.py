@@ -3,6 +3,9 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from ..models import Sneaker
 from ..serializers import SneakerSerializer
+from django.views import View
+from django.http import JsonResponse
+from ..sql_queries_sql import fetch_consumables
 
 @api_view(['GET'])
 def get_all_sneakers(request):
@@ -21,3 +24,8 @@ def get_sneaker_by_id(request, pk):
             {"error": "Sneaker not found"},
             status=status.HTTP_404_NOT_FOUND
         )
+
+class ConsumablesListView(View):
+    def get(self, request, *args, **kwargs):
+        data = fetch_consumables()
+        return JsonResponse(data, safe=False, json_dumps_params={'ensure_ascii': False})

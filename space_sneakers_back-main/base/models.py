@@ -17,28 +17,6 @@ class User(models.Model):
     def __str__(self):
         return self.email
 
-class BankCard(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    card_number = models.CharField(max_length=255)
-
-    class Meta:
-        db_table = 'bank_cards'
-
-    def __str__(self):
-        return f"Card ending {self.card_number[-4:]}"
-
-class Feedback(models.Model):
-    name = models.CharField(max_length=255, blank=True, null=True)
-    email = models.EmailField(blank=True, null=True)
-    message = models.TextField()
-    submitted_at = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        db_table = 'feedback'
-
-    def __str__(self):
-        return f"Feedback from {self.email or self.name}"
-
 class Sneaker(models.Model):
     name = models.CharField(max_length=255)
     price = models.DecimalField(max_digits=10, decimal_places=2)
