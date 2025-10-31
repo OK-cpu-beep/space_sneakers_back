@@ -5,7 +5,7 @@ from .views.orders_view import get_orders_by_user, delete_order, delete_order_it
 from .views.users_view import LoginView, RegisterView, UserProfileView
 
 urlpatterns = [
-    path('consumabless/', ConsumablesListView.as_view(), name='consumables-list'), #приколы
+    path('consumables/', ConsumablesListView.as_view(), name='consumables-list'), #приколы
     path('products/', get_all_sneakers, name='get_all_products'),  # Переименовал для ясности
     path('products/<int:pk>/', get_sneaker_by_id, name='get_product_by_id'),  # Переименовал для ясности
     path('orders/delete/<int:order_id>/', delete_order, name='delete_order'),  # Заменил cart_id на order_id

@@ -31,11 +31,11 @@ function Home({
   }
 
   const filteredItems = items.filter((item) => {
+    console.log(item);
     return (
       (filters.gender === "all" || item.gender === filters.gender) &&
       (filters.category === "all" || item.category === filters.category) &&
       (filters.season === "all" || item.season === filters.season) &&
-      (filters.color === "all" || item.color === filters.color) &&
       item.title.toLowerCase().includes(searchValue.toLowerCase())
     )
   })

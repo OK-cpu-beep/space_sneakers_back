@@ -1,168 +1,57 @@
 const BASE_URL = "/api";
 
 // Временная имитация массива кроссовок (мок-данные)
-const MOCK_SNEAKERS = [
-  {
-    id: 1,
-    title: "Nike Air Max 90",
-    price: 12990,
-    gender: "unisex",
-    category: "sneakers",
-    season: "summer",
-    color: "white/red",
-    sizes: { 40: true, 41: true, 42: true, 43: true },
-    composition: { upper: "textile", sole: "rubber" },
-    description: "Классическая модель с амортизацией Air.",
-  },
-  {
-    id: 2,
-    title: "Adidas Ultraboost 22",
-    price: 15990,
-    gender: "men",
-    category: "sneakers",
-    season: "spring",
-    color: "black",
-    sizes: { 41: true, 42: true, 43: true, 44: true },
-    composition: { upper: "primeknit", sole: "boost" },
-    description: "Комфорт и возврат энергии на каждое движение.",
-  },
-  {
-    id: 3,
-    title: "Puma Suede Classic",
-    price: 7990,
-    gender: "women",
-    category: "sneakers",
-    season: "autumn",
-    color: "green",
-    sizes: { 36: true, 37: true, 38: true, 39: true },
-    composition: { upper: "suede", sole: "rubber" },
-    description: "Легендарные замшевые кеды на каждый день.",
-  },
-  {
-    id: 4,
-    title: "New Balance 574",
-    price: 9990,
-    gender: "unisex",
-    category: "sneakers",
-    season: "winter",
-    color: "grey",
-    sizes: { 40: true, 41: true, 42: true },
-    composition: { upper: "suede/textile", sole: "eva/rubber" },
-    description: "Баланс комфорта и стиля.",
-  },
-  {
-    id: 5,
-    title: "Asics Gel-Kayano 28",
-    price: 17990,
-    gender: "men",
-    category: "sneakers",
-    season: "summer",
-    color: "blue",
-    sizes: { 41: true, 42: true, 43: true },
-    composition: { upper: "mesh", sole: "gel" },
-    description: "Стабильность и поддержка на длинные дистанции.",
-  },
-  {
-    id: 6,
-    title: "Reebok Club C 85",
-    price: 7490,
-    gender: "women",
-    category: "sneakers",
-    season: "spring",
-    color: "white",
-    sizes: { 36: true, 37: true, 38: true },
-    composition: { upper: "leather", sole: "rubber" },
-    description: "Чистая классика 80-х.",
-  },
-  {
-    id: 7,
-    title: "Nike Dunk Low",
-    price: 11990,
-    gender: "unisex",
-    category: "sneakers",
-    season: "summer",
-    color: "multi",
-    sizes: { 40: true, 41: true, 42: true, 43: true },
-    composition: { upper: "leather", sole: "rubber" },
-    description: "Икона уличного стиля.",
-  },
-  {
-    id: 8,
-    title: "Jordan 1 Mid",
-    price: 14990,
-    gender: "men",
-    category: "sneakers",
-    season: "autumn",
-    color: "black/red",
-    sizes: { 41: true, 42: true, 43: true, 44: true },
-    composition: { upper: "leather", sole: "rubber" },
-    description: "Легенда баскетбола с богатой историей.",
-  },
-]
+const fetchSneakers = async () => {
+  const response = await fetch(`${BASE_URL}/products/`);
+  if (!response.ok) {
+    console.warn("Не удалось загрузить кроссовки, возвращаем пустой массив");
+    return [];
+  }
+  const data = await response.json();
 
+  return data.map(item => {
+    // Преобразуем sizes: [40, 41, 42] → { 40: true, 41: true, 42: true }
+    let sizes = {};
+    if (Array.isArray(item.sizes)) {
+      sizes = item.sizes.reduce((acc, size) => {
+        acc[size] = true;
+        return acc;
+      }, {});
+    } else if (typeof item.sizes === 'object' && item.sizes !== null) {
+      // Если sizes уже объект — оставляем как есть
+      sizes = item.sizes;
+    }
+
+    return {
+      ...item,
+      gender: item.gender || "unisex",
+      season: item.season || "",
+      color: item.color || "",
+      sizes: sizes,
+      composition: item.composition || {},
+      description: item.description || "Без описания",
+    };
+  });
+};
 // Дополнительные товары (стельки и шнурки)
-const ADDITIONAL_PRODUCTS = [
-  {
-    id: 1001,
-    title: "Гелевые стельки Nike",
-    price: 1990,
+const fetchAdditionalProducts = async () => {
+  const response = await fetch(`${BASE_URL}/consumables/`);
+  if (!response.ok) {
+    console.warn("Не удалось загрузить аксессуары, используем пустой массив");
+    return [];
+  }
+  const data = await response.json();
+  // Добавляем недостающие поля, чтобы структура совпадала с MOCK_SNEAKERS
+  return data.map(item => ({
+    ...item,
     gender: "unisex",
-    category: "insoles",
     season: "",
     color: "",
     sizes: {},
     composition: {},
-    description: "Комфортные гелевые стельки для максимального удобства.",
-  },
-  {
-    id: 1002,
-    title: "Ортопедические стельки Adidas",
-    price: 2490,
-    gender: "unisex",
-    category: "insoles",
-    season: "",
-    color: "",
-    sizes: {},
-    composition: {},
-    description: "Ортопедические стельки для поддержки стопы.",
-  },
-  {
-    id: 1003,
-    title: "Шнурки Nike (белые)",
-    price: 490,
-    gender: "unisex",
-    category: "laces",
-    season: "",
-    color: "white",
-    sizes: {},
-    composition: {},
-    description: "Классические белые шнурки Nike.",
-  },
-  {
-    id: 1004,
-    title: "Шнурки Adidas (черные)",
-    price: 590,
-    gender: "unisex",
-    category: "laces",
-    season: "",
-    color: "black",
-    sizes: {},
-    composition: {},
-    description: "Стильные черные шнурки Adidas.",
-  },
-  {
-    id: 1005,
-    title: "Шнурки Jordan (красные)",
-    price: 690,
-    gender: "unisex",
-    category: "laces",
-    season: "",
-    color: "red",
-    sizes: {},
-    composition: {},
-    description: "Яркие красные шнурки Jordan.",
-  },
-]
+    description: item.title || "Без описания",
+  }));
+};
 
 export const api = {
   // Получить все товары (кроссовки + аксессуары)
@@ -170,16 +59,20 @@ export const api = {
     // Имитация задержки сети
     await new Promise((resolve) => setTimeout(resolve, 400))
 
+    const MOCK_SNEAKERS = await fetchSneakers();
+    // Получаем аксессуары из API
+    const ADDITIONAL_PRODUCTS = await fetchAdditionalProducts();
+
     // Объединяем кроссовки и аксессуары
     const allProducts = [...MOCK_SNEAKERS, ...ADDITIONAL_PRODUCTS]
 
     // Преобразуем в формат, который ожидает фронт
     return allProducts.map((item) => ({
       id: item.id,
-      title: item.title,
+      title: item.name || item.title || "damn",
       price: item.price,
       imageUrl:
-        item.category === "sneakers"
+          item.id < 1000
           ? `/img/sneakers/${item.id}.png`
           : item.category === "insoles"
           ? `/img/accessories/insoles-${item.id - 1000}.png`

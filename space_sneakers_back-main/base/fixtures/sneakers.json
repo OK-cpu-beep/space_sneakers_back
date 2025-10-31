@@ -1,0 +1,534 @@
+[
+    {
+      "model": "base.sneaker",
+      "pk": 1,
+      "fields": {
+        "name": "Nike Blazer Mid Suede Green",
+        "price": 10499,
+        "category": "sneakers",
+        "surface_type": "urban",
+        "composition": ["замша", "резиновая подошва", "текстильная подкладка"],
+        "description": "Классические высокие кеды Nike Blazer Mid с замшевым верхом в насыщенном зелёном цвете и прочной резиновой подошвой.",
+        "gender": "male",
+        "sizes": [37, 38, 39, 40]
+      }
+    },
+    {
+      "model": "base.sneaker",
+      "pk": 2,
+      "fields": {
+        "name": "Nike Air Max 270",
+        "price": 14990,
+        "category": "sneakers",
+        "surface_type": "road",
+        "composition": ["сетчатый верх", "пластиковая вставка в пятке", "пена в подошве"],
+        "description": "Инновационная модель с 270˚ Air в пятке для максимальной амортизации и дышащим сетчатым верхом.",
+        "gender": "unisex",
+        "sizes": [38, 39, 40, 41, 42]
+      }
+    },
+    {
+      "model": "base.sneaker",
+      "pk": 3,
+      "fields": {
+        "name": "Nike Blazer Mid Suede White",
+        "price": 10499,
+        "category": "sneakers",
+        "surface_type": "urban",
+        "composition": ["замша", "резиновая подошва", "синтетическая подкладка"],
+        "description": "Белые высокие кеды Blazer Mid из мягкого замша с классическим Swoosh и ретро-силуэтом.",
+        "gender": "female",
+        "sizes": [36, 37, 38]
+      }
+    },
+    {
+      "model": "base.sneaker",
+      "pk": 4,
+      "fields": {
+        "name": "Puma X Aka Boku Future Rider",
+        "price": 8490,
+        "category": "sneakers",
+        "surface_type": "road",
+        "composition": ["нейлоновая сетка", "замшевые накладки", "резиновая подошва"],
+        "description": "Коллаборация Puma × Aka Boku: облегчённая подошва Rider Foam и замшево-нейлоновый верх.",
+        "gender": "unisex",
+        "sizes": [37, 38, 39, 40, 41]
+      }
+    },
+    {
+      "model": "base.sneaker",
+      "pk": 5,
+      "fields": {
+        "name": "Under Armour Curry 8",
+        "price": 10990,
+        "category": "sneakers",
+        "surface_type": "court",
+        "composition": ["лёгкий вязаный материал", "микрофибровые накладки", "резиновая подошва"],
+        "description": "Stephen Curry 8 с технологией UA Flow для отзывчивой амортизации на корте.",
+        "gender": "male",
+        "sizes": [40, 41, 42]
+      }
+    },
+    {
+      "model": "base.sneaker",
+      "pk": 6,
+      "fields": {
+        "name": "Nike Kyrie 7",
+        "price": 9990,
+        "category": "sneakers",
+        "surface_type": "court",
+        "composition": ["сетка", "синтетические ремешки", "резиновый протектор"],
+        "description": "Kyrie 7 с Air Zoom Turbo и асимметричной шнуровкой для резких разворотов.",
+        "gender": "male",
+        "sizes": [37, 38, 39, 40, 41, 42]
+      }
+    },
+    {
+      "model": "base.sneaker",
+      "pk": 7,
+      "fields": {
+        "name": "Jordan Air Jordan 11",
+        "price": 21990,
+        "category": "sneakers",
+        "surface_type": "urban",
+        "composition": ["лакированная кожа", "баллистическая сетка", "карбоновая пружинная пластина"],
+        "description": "Легендарная AJ11 с глянцевой кожей, прозрачной подошвой и карбоновой пластиной.",
+        "gender": "unisex",
+        "sizes": [38, 39, 40]
+      }
+    },
+    {
+      "model": "base.sneaker",
+      "pk": 8,
+      "fields": {
+        "name": "Nike LeBron XVIII",
+        "price": 18990,
+        "category": "sneakers",
+        "surface_type": "court",
+        "composition": ["четырёхосная сетка", "Max Air", "Zoom Air"],
+        "description": "LeBron XVIII — гибрид амортизации Max Air и Zoom Air для мягкой отдачи.",
+        "gender": "male",
+        "sizes": [40, 41, 42, 43]
+      }
+    },
+    {
+      "model": "base.sneaker",
+      "pk": 9,
+      "fields": {
+        "name": "Nike LeBron XVIII Low",
+        "price": 17490,
+        "category": "sneakers",
+        "surface_type": "court",
+        "composition": ["сетчатый верх", "синтетические накладки", "пена в подошве"],
+        "description": "Низкопрофильная версия LeBron XVIII с облегченным верхом и сохранёнными Air-технологиями.",
+        "gender": "male",
+        "sizes": [38, 39, 40, 41]
+      }
+    },
+    {
+      "model": "base.sneaker",
+      "pk": 10,
+      "fields": {
+        "name": "Nike Blazer Mid Suede",
+        "price": 10499,
+        "category": "sneakers",
+        "surface_type": "urban",
+        "composition": ["замша", "резиновая подошва", "текстильная подкладка"],
+        "description": "Классические Blazer Mid из замши с винтажным силуэтом и прочной подошвой.",
+        "gender": "unisex",
+        "sizes": [37, 38, 39, 40, 41]
+      }
+    },
+    {
+      "model": "base.sneaker",
+      "pk": 11,
+      "fields": {
+        "name": "BAPE STA OS #3 M2 Black",
+        "price": 21990,
+        "category": "sneakers",
+        "surface_type": "urban",
+        "composition": ["кожаный верх", "резиновая подошва", "синтетическая подкладка"],
+        "description": "Уличный стиль Токио: кожаный верх и фирменная звезда STA на боковой панели.",
+        "gender": "unisex",
+        "sizes": [38, 39, 40]
+      }
+    },
+    {
+      "model": "base.sneaker",
+      "pk": 12,
+      "fields": {
+        "name": "Nike Dunk Low GS ''Laser Fuchsia'' FB9109-102",
+        "price": 10490,
+        "category": "sneakers",
+        "surface_type": "urban",
+        "composition": ["кожа", "резиновая подошва", "текстильная стелька"],
+        "description": "Детская версия Dunk Low в белом с яркими фуксия-акцентами.",
+        "gender": "female",
+        "sizes": [36, 37, 38, 39]
+      }
+    },
+    {
+      "model": "base.sneaker",
+      "pk": 13,
+      "fields": {
+        "name": "Nike V2K Run FD0736-003",
+        "price": 7990,
+        "category": "sneakers",
+        "surface_type": "road",
+        "composition": ["сетчатый верх", "TPU накладки", "пена Phylon в подошве"],
+        "description": "Ретро-дизайн с амортизацией Phylon и дышащим сетчатым верхом.",
+        "gender": "unisex",
+        "sizes": [39, 40, 41]
+      }
+    },
+    {
+      "model": "base.sneaker",
+      "pk": 14,
+      "fields": {
+        "name": "Asics Gel-Venture 6 trainers in off white",
+        "price": 7490,
+        "category": "sneakers",
+        "surface_type": "trail",
+        "composition": ["синтетическая кожа", "сетка", "амортизация GEL"],
+        "description": "Трейловая модель с GEL-амортизацией и протектором AHAR+ для надёжного сцепления.",
+        "gender": "unisex",
+        "sizes": [37, 38, 39, 40]
+      }
+    },
+    {
+      "model": "base.sneaker",
+      "pk": 15,
+      "fields": {
+        "name": "SOFTRIDE Astro Slip MetaCamo Running Shoes",
+        "price": 6990,
+        "category": "sneakers",
+        "surface_type": "road",
+        "composition": ["неопрен", "EVA в подошве", "резиновая подошва"],
+        "description": "Slip-on Astro с эластичной неопреновой вставкой и стелькой из EVA.",
+        "gender": "unisex",
+        "sizes": [38, 39, 40, 41]
+      }
+    },
+    {
+      "model": "base.sneaker",
+      "pk": 16,
+      "fields": {
+        "name": "New Balance 2002R Marblehead",
+        "price": 12990,
+        "category": "sneakers",
+        "surface_type": "urban",
+        "composition": ["замша из телячьей кожи", "сетка", "амортизация ABZORB"],
+        "description": "Реинкарнация 2002R с премиальной замшей и технологией ABZORB.",
+        "gender": "unisex",
+        "sizes": [37, 38, 39]
+      }
+    },
+    {
+      "model": "base.sneaker",
+      "pk": 17,
+      "fields": {
+        "name": "Salomon Khaki ACS Pro",
+        "price": 15990,
+        "category": "sneakers",
+        "surface_type": "trail",
+        "composition": ["сетчатая система SensiFit", "шнуровка Quicklace", "подошва Contragrip"],
+        "description": "Классика трейл-бега с Quicklace и надёжным протектором Contragrip.",
+        "gender": "unisex",
+        "sizes": [39, 40, 41, 42]
+      }
+    },
+    {
+      "model": "base.sneaker",
+      "pk": 18,
+      "fields": {
+        "name": "Nike Lahar Canvas Low Grain",
+        "price": 7490,
+        "category": "sneakers",
+        "surface_type": "urban",
+        "composition": ["холст", "кожаные накладки", "резиновая подошва"],
+        "description": "Текстильный верх с кожаными накладками и традиционной резиновой подошвой.",
+        "gender": "unisex",
+        "sizes": [37, 38, 39, 40]
+      }
+    },
+    {
+      "model": "base.sneaker",
+      "pk": 19,
+      "fields": {
+        "name": "Ben & Jerry's x Dunk Low SB Chunky Dunky Colorido - Verde",
+        "price": 11990,
+        "category": "sneakers",
+        "surface_type": "urban",
+        "composition": ["кожа", "синтетические накладки", "резиновая подошва"],
+        "description": "Яркая коллаборация с Ben & Jerry's: волнистые вставки и молочные оттенки.",
+        "gender": "unisex",
+        "sizes": [38, 39, 40, 41]
+      }
+    },
+    {
+      "model": "base.sneaker",
+      "pk": 20,
+      "fields": {
+        "name": "Nike Cortez Shoes Baroque Brown DZ2795-200",
+        "price": 7490,
+        "category": "sneakers",
+        "surface_type": "urban",
+        "composition": ["нейлон", "замша на пятке", "резиновая подошва с узором вафли"],
+        "description": "Классический Cortez с нейлоновым верхом, замшей на пятке и вафельной подошвой.",
+        "gender": "unisex",
+        "sizes": [37, 38, 39]
+      }
+    },
+    {
+      "model": "base.sneaker",
+      "pk": 21,
+      "fields": {
+        "name": "CHANEL Knit Suede Fabric CC Green Dark",
+        "price": 89990,
+        "category": "sneakers",
+        "surface_type": "urban",
+        "composition": ["трикотаж", "замша", "резиновая подошва"],
+        "description": "Люксовый кроссовок Chanel: трикотажный верх, замшевые детали и логотип CC.",
+        "gender": "female",
+        "sizes": [36, 37, 38]
+      }
+    },
+    {
+      "model": "base.sneaker",
+      "pk": 22,
+      "fields": {
+        "name": "Nike Dunk Low Parris Goebel Pink FN2721-600",
+        "price": 11490,
+        "category": "sneakers",
+        "surface_type": "urban",
+        "composition": ["кожа", "резиновая подошва", "текстильная подкладка"],
+        "description": "Коллаборация с Parris Goebel: розовый кожаный верх и усиленная подошва.",
+        "gender": "female",
+        "sizes": [38, 39, 40, 41]
+      }
+    },
+    {
+      "model": "base.sneaker",
+      "pk": 23,
+      "fields": {
+        "name": "Lacoste L-Spin Deluxe 3.0 2232SFA",
+        "price": 8990,
+        "category": "sneakers",
+        "surface_type": "urban",
+        "composition": ["синтетическая кожа", "EVA в подошве", "резиновая подошва"],
+        "description": "Чистые линии Lacoste, лёгкая стелька EVA и обновлённый узор подошвы.",
+        "gender": "unisex",
+        "sizes": [37, 38, 39, 40]
+      }
+    },
+    {
+      "model": "base.sneaker",
+      "pk": 24,
+      "fields": {
+        "name": "Air Jordan 1 Zoom CMFT 2 Dresses Up In Orange And Blue",
+        "price": 15490,
+        "category": "sneakers",
+        "surface_type": "urban",
+        "composition": ["кожа", "Zoom Air", "резиновая подошва с чашкой"],
+        "description": "Jordan 1 с Zoom Air внутри и яркими оранжево-синими акцентами.",
+        "gender": "unisex",
+        "sizes": [38, 39, 40, 41]
+      }
+    },
+    {
+      "model": "base.sneaker",
+      "pk": 25,
+      "fields": {
+        "name": "Off-White Be Right Back Track Runner Blue",
+        "price": 18990,
+        "category": "sneakers",
+        "surface_type": "urban",
+        "composition": ["сетка", "замша", "резиновая подошва"],
+        "description": "Вирджил Абло×Nike: дышащая сетка, замшевые вставки и фирменные швы.",
+        "gender": "unisex",
+        "sizes": [37, 38, 39]
+      }
+    },
+    {
+      "model": "base.sneaker",
+      "pk": 26,
+      "fields": {
+        "name": "Puma Softride Sway Running Shoe",
+        "price": 7990,
+        "category": "sneakers",
+        "surface_type": "road",
+        "composition": ["сетка", "TPU накладки", "пена Softride"],
+        "description": "Ежедневный бег с амортизацией Softride и лёгким верхом.",
+        "gender": "unisex",
+        "sizes": [40, 41, 42, 43]
+      }
+    },
+    {
+      "model": "base.sneaker",
+      "pk": 27,
+      "fields": {
+        "name": "Balenciaga Runner Marathon",
+        "price": 69990,
+        "category": "sneakers",
+        "surface_type": "urban",
+        "composition": ["сетка", "неопрен", "резиновый протектор"],
+        "description": "Дизайнерская многослойная модель с массивным протектором и logomania.",
+        "gender": "unisex",
+        "sizes": [38, 39, 40]
+      }
+    },
+    {
+      "model": "base.sneaker",
+      "pk": 28,
+      "fields": {
+        "name": "Nike LeBron Witness",
+        "price": 10490,
+        "category": "sneakers",
+        "surface_type": "court",
+        "composition": ["сетка", "синтетическая кожа", "резиновая подошва"],
+        "description": "Witness — надёжная баскетбольная модель с усиленным протектором.",
+        "gender": "male",
+        "sizes": [37, 38, 39, 40, 41]
+      }
+    },
+    {
+      "model": "base.sneaker",
+      "pk": 29,
+      "fields": {
+        "name": "Nike KD 15 ''All-star''",
+        "price": 13990,
+        "category": "sneakers",
+        "surface_type": "court",
+        "composition": ["сетка", "вязаный материал", "Zoom Air"],
+        "description": "All-Star-версия KD15 с выразительным дизайном и поддержкой Zoom Air.",
+        "gender": "male",
+        "sizes": [38, 39, 40]
+      }
+    },
+    {
+      "model": "base.sneaker",
+      "pk": 30,
+      "fields": {
+        "name": "Asics GEL-Kayano sport style",
+        "price": 15990,
+        "category": "sneakers",
+        "surface_type": "road",
+        "composition": ["инженерная сетка", "GEL", "FlyteFoam"],
+        "description": "Kayano для бега и стритстайла: стабильность и комфорт от GEL+FlyteFoam.",
+        "gender": "unisex",
+        "sizes": [37, 38, 39, 40]
+      }
+    },
+    {
+      "model": "base.sneaker",
+      "pk": 31,
+      "fields": {
+        "name": "ASICS SportStyle GEL-Preleus",
+        "price": 9990,
+        "category": "sneakers",
+        "surface_type": "urban",
+        "composition": ["сетка", "синтетическая кожа", "амортизация GEL"],
+        "description": "Ретро-силуэт Preleus: сетка, синтетика и амортизирующий GEL.",
+        "gender": "unisex",
+        "sizes": [39, 40, 41]
+      }
+    },
+    {
+      "model": "base.sneaker",
+      "pk": 32,
+      "fields": {
+        "name": "ASICS Gel-NYC Cecilie Bahnsen",
+        "price": 10990,
+        "category": "sneakers",
+        "surface_type": "urban",
+        "composition": ["сетка", "синтетические накладки", "резиновая подошва"],
+        "description": "Коллаборация с Cecilie Bahnsen: пастельный верх и архитектурный дизайн.",
+        "gender": "female",
+        "sizes": [37, 38, 39, 40, 41]
+      }
+    },
+    {
+      "model": "base.sneaker",
+      "pk": 33,
+      "fields": {
+        "name": "Off-White x Nike Air Rubber Dunk men",
+        "price": 17990,
+        "category": "sneakers",
+        "surface_type": "urban",
+        "composition": ["кожа", "резиновые накладки", "пена в подошве"],
+        "description": "Грубая версия Dunk: массивные резиновые накладки и открытая пена.",
+        "gender": "male",
+        "sizes": [38, 39, 40]
+      }
+    },
+    {
+      "model": "base.sneaker",
+      "pk": 34,
+      "fields": {
+        "name": "Nike Air Zoom Structure 21 women",
+        "price": 12990,
+        "category": "sneakers",
+        "surface_type": "road",
+        "composition": ["сетка", "Zoom Air", "Dynamic Support"],
+        "description": "Женская Structure 21 с Dynamic Support и Zoom Air в носке.",
+        "gender": "female",
+        "sizes": [36, 37, 38, 39]
+      }
+    },
+    {
+      "model": "base.sneaker",
+      "pk": 35,
+      "fields": {
+        "name": "ASICS Sportstyle Run Style",
+        "price": 8490,
+        "category": "sneakers",
+        "surface_type": "urban",
+        "composition": ["синтетическая кожа", "сетка", "EVA в подошве"],
+        "description": "Универсальная улица-модель с мягкой EVA и чистым дизайном.",
+        "gender": "unisex",
+        "sizes": [37, 38, 39, 40]
+      }
+    },
+    {
+      "model": "base.sneaker",
+      "pk": 36,
+      "fields": {
+        "name": "Nike Zoom Vomero 5 FN8361-100",
+        "price": 11990,
+        "category": "sneakers",
+        "surface_type": "road",
+        "composition": ["сетка", "Zoom Air", "React пена"],
+        "description": "Vomero 5 с React-пеной и Zoom Air для плавного хода.",
+        "gender": "unisex",
+        "sizes": [38, 39, 40, 41]
+      }
+    },
+    {
+      "model": "base.sneaker",
+      "pk": 37,
+      "fields": {
+        "name": "Nike Zoom Air Fire W DV1129-101",
+        "price": 13990,
+        "category": "sneakers",
+        "surface_type": "court",
+        "composition": ["синтетическая кожа", "Zoom Air", "резиновая подошва"],
+        "description": "Женская модель Zoom Air Fire с устойчивой подошвой и амортизацией Zoom.",
+        "gender": "female",
+        "sizes": [37, 38, 39, 40]
+      }
+    },
+    {
+      "model": "base.sneaker",
+      "pk": 38,
+      "fields": {
+        "name": "Nike Dunk Low Retro White",
+        "price": 10490,
+        "category": "sneakers",
+        "surface_type": "urban",
+        "composition": ["кожа", "резиновая подошва", "текстильная подкладка"],
+        "description": "Ретро-версия Dunk Low с классическим белым кожаным верхом.",
+        "gender": "unisex",
+        "sizes": [37, 38, 39, 40]
+      }
+    }
+  ]

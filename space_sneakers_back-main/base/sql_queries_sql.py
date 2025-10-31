@@ -126,7 +126,7 @@ def fetch_consumables():
             })
 
         # Вывод в формате JSON
-        print(json.dumps(consumables, ensure_ascii=False, indent=2))
+        # print(json.dumps(consumables, ensure_ascii=False, indent=2))
         return consumables
 
     except (Exception, psycopg2.DatabaseError) as error:

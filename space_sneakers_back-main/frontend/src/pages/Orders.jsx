@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react"
+import React, { useContext, useState, useEffect } from "react"
 import AppContext from "../context"
 import { useCart } from "../hooks/useCart"
 import { api } from "../api"
@@ -11,7 +11,7 @@ function useAdditionalProducts() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await fetch('/api/consumables/');
+        const res = await fetch('consumables/');
         const data = await res.json();
         setAdditionalProducts(data);
       } catch (err) {
@@ -192,26 +192,30 @@ function Orders() {
         <div className="frequently-bought-section mb-30">
           <h2 className="mb-20">С этим товаром часто берут</h2>
           <div className="additional-products-grid">
-            {ADDITIONAL_PRODUCTS.map((product) => (
-              <div key={product.id} className="additional-product-card">
-                <div
-                  className="additional-product-image"
-                  style={{ backgroundImage: `url(${product.imageUrl})` }}
-                ></div>
-                <div className="additional-product-info">
-                  <h4>{product.title}</h4>
-                  <p className="additional-product-price">
-                    {product.price} руб.
-                  </p>
-                  <button
-                    className="add-additional-button"
-                    onClick={() => handleAddAdditionalProduct(product)}
-                  >
-                    Добавить
-                  </button>
-                </div>
+            {!loading && additionalProducts.length > 0 && (
+              <div className="additional-products-grid">
+                {additionalProducts.map((product) => (
+                  <div key={product.id} className="additional-product-card">
+                    <div
+                      className="additional-product-image"
+                      style={{ backgroundImage: `url(${product.imageUrl})` }}
+                    ></div>
+                    <div className="additional-product-info">
+                      <h4>{product.title}</h4>
+                      <p className="additional-product-price">
+                        {product.price} руб.
+                      </p>
+                      <button
+                        className="add-additional-button"
+                        onClick={() => handleAddAdditionalProduct(product)}
+                      >
+                        Добавить
+                      </button>
+                    </div>
+                  </div>
+                ))}
               </div>
-            ))}
+            )}
           </div>
         </div>
       )}
