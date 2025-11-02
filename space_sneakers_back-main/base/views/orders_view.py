@@ -1,8 +1,11 @@
+from django.http import JsonResponse
+from django.views import View
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from ..models import Cart, CartItem, Sneaker, User
 from ..serializers import CartSerializer, CartItemSerializer
+from ..sql_queries_sql import get_recommendations, get_all_discount
 
 @api_view(['GET'])
 def get_orders_by_user(request, user_id):
@@ -102,3 +105,27 @@ def create_order(request):
         result = CartSerializer(cart)
         return Response(result.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class RecommendationsView(View):
+    def get(self, request, user_id):
+        try:
+            # Проверка: user_id должен быть целым положительным числом
+            if not isinstance(user_id, int) or user_id <= 0:
+                return JsonResponse({"error": "Invalid user_id"}, status=400)
+
+            recommendations = get_recommendations(user_id)
+
+            # Убедись, что get_recommendations возвращает список словарей вида:
+            # [
+            #   {"con_id": ..., "name": ..., "price": ..., "category": ..., "imageurl": ...},
+            #   ...
+            # ]
+
+            return JsonResponse(recommendations, safe=False, json_dumps_params={'ensure_ascii': False})
+
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
+
+def all_discounts_view(request):
+    data = get_all_discount()
+    return JsonResponse(data, safe=False)

@@ -29,3 +29,4 @@ class ConsumablesListView(View):
     def get(self, request, *args, **kwargs):
         data = fetch_consumables()
         return JsonResponse(data, safe=False, json_dumps_params={'ensure_ascii': False})
+

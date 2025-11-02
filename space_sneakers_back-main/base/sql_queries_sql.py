@@ -14,36 +14,70 @@ DB_PARAMS = {
 
 def get_recommendations(user_id):
     connection = psycopg2.connect(**DB_PARAMS)
-    cursor = connection.cursor(cursor_factory=RealDictCursor)
+    try:
+        with connection.cursor(cursor_factory=RealDictCursor) as cur:
+            cur.execute("""
+                SELECT DISTINCT ci.sneaker_id
+                FROM public.carts c
+                JOIN public.cart_items ci ON c.id = ci.cart_id
+                WHERE c.user_id = %s
+            """, (user_id,))
 
-    cursor.execute("""
-        SELECT sneaker_id FROM cart_items
-        WHERE cart_id IN (SELECT id FROM carts WHERE user_id = %s)
-    """, (user_id,))
-    cart_items = cursor.fetchall()
+            sneaker_ids = [row['sneaker_id'] for row in cur.fetchall()]
+            print(sneaker_ids)
+            if not sneaker_ids:
+                return []
 
-    category_ids = [item['sneaker_id'] for item in cart_items]
+            cur.execute("""
+                SELECT 
+                    rec.recommended_product_id AS con_id,
+                    cons.name AS name,
+                    cons.price AS price,
+                    cons.category AS category,
+                    cons.imageurl AS imageurl
+                FROM public.recommendations rec
+                JOIN public.consumables cons ON rec.recommended_product_id = cons.con_id
+                WHERE rec.source_product_id = ANY(%(sneaker_ids)s::BIGINT[])
+                  AND rec.is_active = true
+            """, {"sneaker_ids": sneaker_ids})
 
-    cursor.execute("""
-        SELECT id, name FROM sneakers
-        WHERE category IN (SELECT category FROM sneakers WHERE id IN (%s))
-        AND id NOT IN (%s)
-    """, (",".join([str(i) for i in category_ids]), ",".join([str(i) for i in category_ids])))
-
-    recommendations = cursor.fetchall()
-
-    connection.close()
-    return json.dumps([{"id": rec['id'], "name": rec['name']} for rec in recommendations])
+            recommendations = []
+            for row in cur.fetchall():
+                recommendations.append({
+                    "con_id": row["con_id"],
+                    "name": row["name"],
+                    "price": float(row["price"]),
+                    "category": row["category"],
+                    "imageurl": row["imageurl"],
+                })
+            return recommendations
+    finally:
+        connection.close()
 
 def get_all_discount():
-    connection = psycopg2.connect(**DB_PARAMS)
-    cursor = connection.cursor(cursor_factory=RealDictCursor)
-
-    cursor.execute("SELECT code, amount, active FROM discounts")
-    discounts = cursor.fetchall()
-
-    connection.close()
-    return json.dumps([{"code": disc['code'], "amount": disc['amount'], "active": disc['active']} for disc in discounts])
+    """
+    Получает все скидки из таблицы public."Discount"
+    и возвращает список словарей в формате:
+    [
+      {"min_amount": 10000, "discount_percent": 5},
+      ...
+    ]
+    """
+    conn = psycopg2.connect(**DB_PARAMS)
+    with conn.cursor() as cursor:
+        cursor.execute('''
+            SELECT min_sum AS min_amount, discount_num AS discount_percent
+            FROM public."Discount"
+            ORDER BY min_sum;
+        ''')
+        rows = cursor.fetchall()
+        # Преобразуем в список словарей
+        result = [
+            {"min_amount": row[0], "discount_percent": row[1]}
+            for row in rows
+        ]
+    conn.close()
+    return result
 
 def update_products(user_id, new_products):
     connection = psycopg2.connect(**DB_PARAMS)
@@ -104,17 +138,14 @@ def get_products(user_id):
 def fetch_consumables():
     conn = None
     try:
-        # Подключение к базе данных
         conn = psycopg2.connect(**DB_PARAMS)
         cur = conn.cursor()
 
         # Выполнение SQL-запроса
         cur.execute("SELECT con_id, name, price, category, imageurl FROM public.consumables;")
 
-        # Получение всех строк
         rows = cur.fetchall()
 
-        # Преобразование в список словарей (как JSON)
         consumables = []
         for row in rows:
             consumables.append({
@@ -125,7 +156,6 @@ def fetch_consumables():
                 'imageUrl': row[4]
             })
 
-        # Вывод в формате JSON
         # print(json.dumps(consumables, ensure_ascii=False, indent=2))
         return consumables
 

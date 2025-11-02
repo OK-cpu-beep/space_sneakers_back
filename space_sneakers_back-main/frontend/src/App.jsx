@@ -15,6 +15,7 @@ import Product from "./pages/Product"
 import Registration from "./pages/Registration"
 
 function App() {
+  const [authChecked, setAuthChecked] = useState(false)
   const [items, setItems] = useState([])
   const [cartItems, setCartItems] = useState([])
   const [cartId, setCartId] = useState(null)
@@ -49,19 +50,19 @@ function App() {
   }, [])
 
   // Проверка аутентификации и загрузка корзины из localStorage (для гостя)
-  useEffect(() => {
+    useEffect(() => {
     const auth = localStorage.getItem("isAuthenticated")
     const user = localStorage.getItem("currentUser")
     if (auth === "true" && user) {
       setIsAuthenticated(true)
       setCurrentUser(JSON.parse(user))
     } else {
-      // Для гостя - только localStorage
       const savedCart = localStorage.getItem("cartItems")
       if (savedCart) {
         setCartItems(JSON.parse(savedCart))
       }
     }
+    setAuthChecked(true) // ← ЭТА СТРОКА НОВАЯ — ВНЕ if/else!
   }, [])
 
   // Получение/создание корзины на сервере после логина/регистрации/обновления страницы
@@ -392,36 +393,40 @@ function App() {
 
           <Header onClickCart={() => setCartOpened(true)} />
 
-          <Routes>
-            <Route
-              path="/"
-              element={
-                <Home
-                  items={items}
-                  cartItems={cartItems}
-                  searchValue={searchValue}
-                  setSearchValue={setSearchValue}
-                  onChangeSearchInput={onChangeSearchInput}
-                  onAddToFavorite={onAddToFavorite}
-                  onAddToCart={onAddToCart}
-                  isLoading={isLoading}
-                />
-              }
-            />
-            <Route path="/favorites" element={<Favorites />} />
-            <Route
-              path="/orders"
-              element={
-                isAuthenticated ? (
-                  <Orders />
-                ) : (
-                  <Navigate to="/auth" state={{ from: "/orders" }} replace />
-                )
-              }
-            />
-            <Route path="/product/:id" element={<Product />} />
-            <Route path="/auth" element={<Registration />} />
-          </Routes>
+          {authChecked ? (
+            <Routes>
+              <Route
+                path="/"
+                element={
+                  <Home
+                    items={items}
+                    cartItems={cartItems}
+                    searchValue={searchValue}
+                    setSearchValue={setSearchValue}
+                    onChangeSearchInput={onChangeSearchInput}
+                    onAddToFavorite={onAddToFavorite}
+                    onAddToCart={onAddToCart}
+                    isLoading={isLoading}
+                  />
+                }
+              />
+              <Route path="/favorites" element={<Favorites />} />
+              <Route
+                path="/orders"
+                element={
+                  isAuthenticated ? (
+                    <Orders />
+                  ) : (
+                    <Navigate to="/auth" state={{ from: "/orders" }} replace />
+                  )
+                }
+              />
+              <Route path="/product/:id" element={<Product />} />
+              <Route path="/auth" element={<Registration />} />
+            </Routes>
+          ) : (
+            <div>Loading...</div> // или null, или спиннер
+          )}
         </div>
       </AppContext.Provider>
     </ParallaxProvider>

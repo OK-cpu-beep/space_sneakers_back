@@ -1,11 +1,11 @@
 from django.contrib import admin
 from django.urls import path
 from .views.products_view import get_all_sneakers, get_sneaker_by_id, ConsumablesListView
-from .views.orders_view import get_orders_by_user, delete_order, delete_order_item, update_order, create_order
+from .views.orders_view import (get_orders_by_user, delete_order, delete_order_item, update_order, create_order,
+                                RecommendationsView, all_discounts_view)
 from .views.users_view import LoginView, RegisterView, UserProfileView
 
 urlpatterns = [
-    path('consumables/', ConsumablesListView.as_view(), name='consumables-list'), #приколы
     path('products/', get_all_sneakers, name='get_all_products'),  # Переименовал для ясности
     path('products/<int:pk>/', get_sneaker_by_id, name='get_product_by_id'),  # Переименовал для ясности
     path('orders/delete/<int:order_id>/', delete_order, name='delete_order'),  # Заменил cart_id на order_id
@@ -16,4 +16,7 @@ urlpatterns = [
     path('register/', RegisterView.as_view(), name='register'),
     path('users/<int:user_id>/', UserProfileView.as_view(), name='user-profile'),
     path('login/', LoginView.as_view(), name='login'),
+    path('consumables/', ConsumablesListView.as_view(), name='consumables-list'), #приколы
+    path('recommendations/<int:user_id>/', RecommendationsView.as_view(), name='recommendations'),
+    path('all_discounts/', all_discounts_view)
 ]

@@ -2,77 +2,128 @@ import React, { useContext, useState, useEffect } from "react"
 import AppContext from "../context"
 import { useCart } from "../hooks/useCart"
 import { api } from "../api"
+const BASE_URL = "/api";
 
-// Дополнительные товары (стельки и шнурки)
-function useAdditionalProducts() {
-  const [additionalProducts, setAdditionalProducts] = useState([]);
+function useRecommendations(currentUser) {
+  const [recommendations, setRecommendations] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchProducts = async () => {
+    const fetchRecommendations = async () => {
+      if (!currentUser || !currentUser.id) {
+        setLoading(false);
+        return;
+      }
+
       try {
-        const res = await fetch('consumables/');
+          
+        const res = await fetch(`${BASE_URL}/recommendations/${currentUser.id}/`);
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
+        }
         const data = await res.json();
-        setAdditionalProducts(data);
+        console.log(data);
+        // Если API возвращает объекты с полем `con_id`, приведём к ожидаемому формату
+        const normalizedData = data.map((item) => ({
+          id: item.con_id, // используем con_id как основной id
+          title: item.name,
+          price: item.price,
+          category: item.category,
+          imageUrl: item.imageurl || item.imageUrl, // на случай разных регистров
+        }));
+
+        setRecommendations(normalizedData);
+        setError(null);
       } catch (err) {
-        console.error('Ошибка загрузки расходников:', err);
+        console.error('Ошибка загрузки рекомендаций:', err);
+        setError(err.message);
+        setRecommendations([]);
       } finally {
         setLoading(false);
       }
     };
-    fetchProducts();
-  }, []);
 
-  return { additionalProducts, loading };
+    fetchRecommendations();
+  }, [currentUser?.id]); // зависимость от currentUser.id
+
+  return { recommendations, loading, error };
 }
 
+export function useDiscounts() {
+  const [discounts, setDiscounts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchDiscounts = async () => {
+      try {
+        const res = await fetch(`${BASE_URL}/all_discounts/`);
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
+        }
+        const data = await res.json();
+        // Ожидаем массив вроде: [{ min_amount: 10000, discount_percent: 5 }, ...]
+        setDiscounts(data);
+        setError(null);
+      } catch (err) {
+        console.error("Ошибка загрузки скидок:", err);
+        setError(err.message);
+        setDiscounts([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDiscounts();
+  }, []);
+
+  return { discounts, loading, error };
+}
 function Orders() {
-  const { additionalProducts, loading } = useAdditionalProducts();
+  
   const { cartItems, setCartItems, onRemoveItem, currentUser, onAddToCart } =
     useContext(AppContext)
   const { totalPrice } = useCart()
   const [orderStatus, setOrderStatus] = useState("")
   const [paymentMethod, setPaymentMethod] = useState("card")
   const [deliveryMethod, setDeliveryMethod] = useState("krasnodar")
+  const { recommendations, loading: recommendationsLoading } = useRecommendations(currentUser);
+  const { discounts: discountRules, loading: discountsLoading } = useDiscounts();
+
+  if (discountsLoading) {
+    return <div className="content p-40">Загрузка скидок...</div>;
+  }
 
   // Автоматический расчет скидки
-  const calculateDiscount = (price) => {
-    if (price >= 100000) return 20
-    if (price >= 75000) return 15
-    if (price >= 50000) return 10
-    if (price >= 30000) return 7
-    if (price >= 10000) return 5
-    return 0
-  }
+    const calculateDiscount = (price) => {
+    if (!discountRules.length) return 0;
+    // Находим максимальную скидку, для которой price >= min_amount
+    const applicable = discountRules
+      .filter(rule => price >= rule.min_amount)
+      .sort((a, b) => b.discount_percent - a.discount_percent); // сортируем по убыванию скидки
+    return applicable.length ? applicable[0].discount_percent : 0;
+  };
 
-  // Функция для расчета суммы до следующей скидки
   const calculateNextDiscountInfo = (price) => {
-    const discountThresholds = [
-      { min: 10000, discount: 5 },
-      { min: 30000, discount: 7 },
-      { min: 50000, discount: 10 },
-      { min: 75000, discount: 15 },
-      { min: 100000, discount: 20 },
-    ]
+    if (!discountRules.length) return null;
 
-    const currentDiscount = calculateDiscount(price)
+    // Сортируем правила по возрастанию min_amount
+    const sortedRules = [...discountRules].sort((a, b) => a.min_amount - b.min_amount);
+    const currentDiscount = calculateDiscount(price);
 
-    // Находим следующую скидку
-    const nextThreshold = discountThresholds.find(
-      (threshold) => threshold.discount > currentDiscount
-    )
+    // Ищем первое правило с БОЛЬШЕЙ скидкой
+    const nextRule = sortedRules.find(rule => rule.discount_percent > currentDiscount);
 
-    if (!nextThreshold) {
-      return null // Уже максимальная скидка
-    }
+    if (!nextRule) return null;
 
-    const amountNeeded = nextThreshold.min - price
+    const amountNeeded = nextRule.min_amount - price;
     return {
       amountNeeded: Math.max(0, amountNeeded),
-      nextDiscount: nextThreshold.discount,
-      nextMin: nextThreshold.min,
-    }
-  }
+      nextDiscount: nextRule.discount_percent,
+      nextMin: nextRule.min_amount,
+    };
+  };
 
   const discount = calculateDiscount(totalPrice)
   const nextDiscountInfo = calculateNextDiscountInfo(totalPrice)
@@ -187,34 +238,34 @@ function Orders() {
         )}
       </div>
 
-      {/* Секция "С этим товаром часто берут" */}
+      {/* Секция "С этим товаром часто берут" → заменим на "Вам могут понравиться" */}
       {cartItems.length > 0 && (
         <div className="frequently-bought-section mb-30">
-          <h2 className="mb-20">С этим товаром часто берут</h2>
+          <h2 className="mb-20">Вам могут понравиться</h2>
           <div className="additional-products-grid">
-            {!loading && additionalProducts.length > 0 && (
-              <div className="additional-products-grid">
-                {additionalProducts.map((product) => (
-                  <div key={product.id} className="additional-product-card">
-                    <div
-                      className="additional-product-image"
-                      style={{ backgroundImage: `url(${product.imageUrl})` }}
-                    ></div>
-                    <div className="additional-product-info">
-                      <h4>{product.title}</h4>
-                      <p className="additional-product-price">
-                        {product.price} руб.
-                      </p>
-                      <button
-                        className="add-additional-button"
-                        onClick={() => handleAddAdditionalProduct(product)}
-                      >
-                        Добавить
-                      </button>
-                    </div>
+            {!recommendationsLoading && recommendations.length > 0 ? (
+              recommendations.map((product) => (
+                <div key={product.id} className="additional-product-card">
+                  <div
+                    className="additional-product-image"
+                    style={{ backgroundImage: `url(${product.imageUrl})` }}
+                  ></div>
+                  <div className="additional-product-info">
+                    <h4>{product.title}</h4>
+                    <p className="additional-product-price">{product.price} руб.</p>
+                    <button
+                      className="add-additional-button"
+                      onClick={() => handleAddAdditionalProduct(product)}
+                    >
+                      Добавить
+                    </button>
                   </div>
-                ))}
-              </div>
+                </div>
+              ))
+            ) : recommendationsLoading ? (
+              <p>Загрузка рекомендаций...</p>
+            ) : (
+              <p>Нет рекомендаций.</p>
             )}
           </div>
         </div>

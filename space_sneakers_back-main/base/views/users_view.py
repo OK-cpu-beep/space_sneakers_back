@@ -1,3 +1,4 @@
+from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -70,10 +71,13 @@ class UserProfileView(APIView):
             
         except (jwt.ExpiredSignatureError, jwt.DecodeError):
             return Response(status=status.HTTP_401_UNAUTHORIZED)
-        
+
+
 class LoginView(APIView):
+    permission_classes = [AllowAny]  # ← КЛЮЧЕВАЯ СТРОКА
     def post(self, request):
         serializer = UserLoginSerializer(data=request.data)
+        print(request.data)
         if serializer.is_valid():
             email = serializer.validated_data['email']
             password = serializer.validated_data['password']
