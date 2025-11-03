@@ -121,9 +121,7 @@ function App() {
             }
           })
           // Отправляем мёрж на сервер
-          await api.updateCart(activeCart.id, {
-            items: Array.from(map.values()),
-          })
+          await api.updateCart(activeCart.id, Array.from(map.values()))
           // Подгружаем заново, чтобы получить правильные item.id
           activeCart = (await api.getCart(currentUser.id)).find(
             (c) => !c.is_paid
@@ -131,15 +129,27 @@ function App() {
         }
 
         // 6) Форматируем для фронта и кладём в state + localStorage
-        const formatted = (activeCart.items || []).map((i) => ({
-          id: i.id,
-          parentId: i.sneaker.id,
-          title: i.sneaker.name,
-          imageUrl: `/img/sneakers/${i.sneaker.id}.png`,
-          price: i.sneaker.price,
-          size: i.size,
-          quantity: i.quantity,
-        }))
+        const formatted = (activeCart.items || []).map((i) => {
+          const sneaker = i.sneaker;
+          const isAccessory = sneaker.id >= 1000; // или по category: sneaker.category !== 'sneakers'
+
+          // Используем imageurl из API, если есть, иначе fallback
+          const imageUrl = sneaker.imageurl || `/img/sneakers/${sneaker.id}.png`;
+
+          // Опционально: парсим цену в число для надёжности (если на фронте нужен number)
+          const price = parseFloat(sneaker.price) || 0;
+          console.log(i)
+          console.log(i.quantity)
+          return {
+            id: i.id,
+            parentId: sneaker.id,
+            title: sneaker.name,
+            imageUrl,
+            price,
+            size: i.size ?? "default", // аксессуары могут не иметь size
+            quantity: i.quantity,
+          };
+        });
         setCartItems(formatted)
         localStorage.setItem("cartItems", JSON.stringify(formatted))
 

@@ -162,11 +162,15 @@ export const api = {
 
   // Обновить корзину пользователя
   updateCart: async (cartId, cartItems) => {
+      if (!Array.isArray(cartItems)) {
+    console.error("❌ updateCart ожидает массив, но получил:", cartItems);
+    throw new Error("cartItems must be an array");
+  }
     const response = await fetch(`${BASE_URL}/orders/${cartId}/update/`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ items: cartItems }),
-    })
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ items: cartItems }),
+  });
     if (!response.ok) {
       throw new Error("Ошибка обновления корзины")
     }

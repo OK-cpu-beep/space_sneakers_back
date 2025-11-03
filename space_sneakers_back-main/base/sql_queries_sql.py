@@ -2,7 +2,7 @@ import psycopg2
 import json
 from psycopg2.extras import RealDictCursor
 from django.conf import settings  # для доступа к базе данных через Django настройки
-
+from psycopg2.extras import execute_values
 # Параметры подключения к PostgreSQL через настройки Django
 DB_PARAMS = {
     'dbname': settings.DATABASES['default']['NAME'],
@@ -29,7 +29,7 @@ def get_recommendations(user_id):
                 return []
 
             cur.execute("""
-                SELECT 
+                SELECT DISTINCT
                     rec.recommended_product_id AS con_id,
                     cons.name AS name,
                     cons.price AS price,
@@ -67,13 +67,13 @@ def get_all_discount():
     with conn.cursor() as cursor:
         cursor.execute('''
             SELECT min_sum AS min_amount, discount_num AS discount_percent
-            FROM public."Discount"
+            FROM public."discount"
             ORDER BY min_sum;
         ''')
         rows = cursor.fetchall()
         # Преобразуем в список словарей
         result = [
-            {"min_amount": row[0], "discount_percent": row[1]}
+            {"min_amount": float(row[0]), "discount_percent": float(row[1])}
             for row in rows
         ]
     conn.close()
@@ -166,3 +166,106 @@ def fetch_consumables():
     finally:
         if conn is not None:
             conn.close()
+
+
+def insert_cart_items(cart_items):
+    """
+    Вставляет записи в carts_consumables.
+
+    :param cart_items: list of dicts, e.g. [{'cart_id': 1, 'con_id': 101, 'quantity': 2}, ...]
+    """
+    print(cart_items)
+    if not cart_items:
+        return
+
+    conn = psycopg2.connect(**DB_PARAMS)
+    try:
+        with conn.cursor() as cur:
+            # Подготавливаем данные: (cart_id, con_id, quantity)
+
+            data = [(item['cart_id'], item['con_id'], item['quantity']) for item in cart_items]
+            execute_values(
+                cur,
+                """
+                INSERT INTO public.carts_consumables (cart_id, con_id, quantity)
+                VALUES %s
+                ON CONFLICT (cart_id, con_id)
+                DO UPDATE SET quantity = EXCLUDED.quantity;
+                """,
+                data
+            )
+        conn.commit()
+    except Exception as e:
+        conn.rollback()
+        raise e
+    finally:
+        conn.close()
+
+
+def clear_cart(cart_id):
+    """
+    Удаляет все записи из carts_consumables для указанной корзины.
+
+    :param cart_id: ID корзины (cart.id)
+    """
+    conn = psycopg2.connect(**DB_PARAMS)
+    try:
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+                DELETE FROM public.carts_consumables
+                WHERE cart_id = %s;
+                """,
+                (cart_id,)
+            )
+        conn.commit()
+    except Exception as e:
+        conn.rollback()
+        raise e
+    finally:
+        conn.close()
+
+def get_consumables_by_cart_id(cart_id):
+    """
+    Возвращает список расходников в корзине по cart_id.
+
+    :param cart_id: ID корзины (значение из carts.id)
+    :return: Список словарей вида:
+        {
+            'con_id': int,
+            'name': str,
+            'price': Decimal,
+            'category': str,
+            'imageurl': str or None,
+            'quantity': int
+        }
+    """
+    conn = psycopg2.connect(**DB_PARAMS)
+    try:
+        with conn.cursor() as cur:
+            cur.execute("""
+                SELECT
+                    c.con_id,
+                    c.name,
+                    c.price,
+                    c.category,
+                    c.imageurl,
+                    cc.quantity
+                FROM public.carts_consumables AS cc
+                INNER JOIN public.consumables AS c ON cc.con_id = c.con_id
+                WHERE cc.cart_id = %s;
+            """, (cart_id,))
+            rows = cur.fetchall()
+            return [
+                {
+                    'con_id': row[0],
+                    'name': row[1],
+                    'price': row[2],
+                    'category': row[3],
+                    'imageurl': row[4],
+                    'quantity': row[5]
+                }
+                for row in rows
+            ]
+    finally:
+        conn.close()

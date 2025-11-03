@@ -31,7 +31,6 @@ function Home({
   }
 
   const filteredItems = items.filter((item) => {
-    console.log(item);
     return (
       (filters.gender === "all" || item.gender === filters.gender) &&
       (filters.category === "all" || item.category === filters.category) &&

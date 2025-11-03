@@ -23,7 +23,6 @@ function useRecommendations(currentUser) {
           throw new Error(`HTTP error! status: ${res.status}`);
         }
         const data = await res.json();
-        console.log(data);
         // Если API возвращает объекты с полем `con_id`, приведём к ожидаемому формату
         const normalizedData = data.map((item) => ({
           id: item.con_id, // используем con_id как основной id
@@ -144,7 +143,7 @@ function Orders() {
     onAddToCart({
       ...product,
       parentId: product.id,
-      size: "default",
+      size: 0,
       quantity: 1,
     })
   }
