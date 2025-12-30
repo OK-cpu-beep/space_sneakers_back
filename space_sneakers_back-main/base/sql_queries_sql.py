@@ -1,9 +1,8 @@
 import psycopg2
 import json
 from psycopg2.extras import RealDictCursor
-from django.conf import settings  # для доступа к базе данных через Django настройки
+from django.conf import settings
 from psycopg2.extras import execute_values
-# Параметры подключения к PostgreSQL через настройки Django
 DB_PARAMS = {
     'dbname': settings.DATABASES['default']['NAME'],
     'user': settings.DATABASES['default']['USER'],
@@ -27,7 +26,6 @@ def get_recommendations(user_id):
             print(sneaker_ids)
             if not sneaker_ids:
                 return []
-
             cur.execute("""
                 SELECT DISTINCT
                     rec.recommended_product_id AS con_id,
@@ -40,7 +38,6 @@ def get_recommendations(user_id):
                 WHERE rec.source_product_id = ANY(%(sneaker_ids)s::BIGINT[])
                   AND rec.is_active = true
             """, {"sneaker_ids": sneaker_ids})
-
             recommendations = []
             for row in cur.fetchall():
                 recommendations.append({
@@ -53,14 +50,12 @@ def get_recommendations(user_id):
             return recommendations
     finally:
         connection.close()
-
 def get_all_discount():
     """
     Получает все скидки из таблицы public."Discount"
     и возвращает список словарей в формате:
     [
       {"min_amount": 10000, "discount_percent": 5},
-      ...
     ]
     """
     conn = psycopg2.connect(**DB_PARAMS)
@@ -168,10 +163,9 @@ def fetch_consumables():
             conn.close()
 
 
-def insert_cart_items(cart_items):
+def insert_cart_consumables(cart_items):
     """
     Вставляет записи в carts_consumables.
-
     :param cart_items: list of dicts, e.g. [{'cart_id': 1, 'con_id': 101, 'quantity': 2}, ...]
     """
     print(cart_items)
@@ -205,7 +199,6 @@ def insert_cart_items(cart_items):
 def clear_cart(cart_id):
     """
     Удаляет все записи из carts_consumables для указанной корзины.
-
     :param cart_id: ID корзины (cart.id)
     """
     conn = psycopg2.connect(**DB_PARAMS)
@@ -228,7 +221,6 @@ def clear_cart(cart_id):
 def get_consumables_by_cart_id(cart_id):
     """
     Возвращает список расходников в корзине по cart_id.
-
     :param cart_id: ID корзины (значение из carts.id)
     :return: Список словарей вида:
         {

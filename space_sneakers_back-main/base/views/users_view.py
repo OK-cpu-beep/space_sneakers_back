@@ -74,7 +74,7 @@ class UserProfileView(APIView):
 
 
 class LoginView(APIView):
-    permission_classes = [AllowAny]  # ← КЛЮЧЕВАЯ СТРОКА
+    permission_classes = [AllowAny]
     def post(self, request):
         serializer = UserLoginSerializer(data=request.data)
         print(request.data)
@@ -87,7 +87,7 @@ class LoginView(APIView):
                     token = generate_jwt(user)
                     return Response({
                         'token': token,
-                        'id': user.id,           # <--- добавьте это!
+                        'id': user.id,
                         'email': user.email
                     }, status=status.HTTP_200_OK)
                 else:

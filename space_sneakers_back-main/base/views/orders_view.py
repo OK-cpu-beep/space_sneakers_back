@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from ..models import Cart, CartItem, Sneaker, User
 from ..serializers import CartSerializer, CartItemSerializer
-from ..sql_queries_sql import get_recommendations, get_all_discount, clear_cart, insert_cart_items, get_consumables_by_cart_id
+from ..sql_queries_sql import get_recommendations, get_all_discount, clear_cart, insert_cart_consumables, get_consumables_by_cart_id
 
 # @api_view(['GET'])
 # def get_orders_by_user(request, user_id):
@@ -129,7 +129,7 @@ def update_order(request, order_id):
                     size=size,
                     quantity=quantity
                 )
-        insert_cart_items(consumables)
+        insert_cart_consumables(consumables)
         cart.save()
 
         serializer = CartSerializer(cart)
@@ -167,7 +167,7 @@ def create_order(request):
                         size=size,
                         quantity=quantity
                     )
-        insert_cart_items(consumables)
+        insert_cart_consumables(consumables)
         # Считаем total_amount
         result = CartSerializer(cart)
         return Response(result.data, status=status.HTTP_201_CREATED)
@@ -181,13 +181,6 @@ class RecommendationsView(View):
                 return JsonResponse({"error": "Invalid user_id"}, status=400)
 
             recommendations = get_recommendations(user_id)
-
-            # Убедись, что get_recommendations возвращает список словарей вида:
-            # [
-            #   {"con_id": ..., "name": ..., "price": ..., "category": ..., "imageurl": ...},
-            #   ...
-            # ]
-
             return JsonResponse(recommendations, safe=False, json_dumps_params={'ensure_ascii': False})
 
         except Exception as e:
